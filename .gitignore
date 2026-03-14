@@ -32,3 +32,23 @@ __MACOSX/
 # Backup files
 *_Code.swift
 *_Part*.md
+
+# Duplicate files in root (not used by Xcode)
+/AddEditExpenseView.swift
+/AnalyticsView.swift
+/Category+CoreData.swift
+/CategoryDetailView.swift
+/CategoryManagementView.swift
+/Color+Hex.swift
+/ContentView.swift
+/DashboardView.swift
+/DataValidation.swift
+/DonutChartView.swift
+/Expense+CoreData.swift
+/ExpenseListView.swift
+/ExpenseRow.swift
+/ExpenseTrackerApp.swift
+/ExpenseViewModel.swift
+/Persistence.swift
+/RecentActivityList.swift
+/TotalSpentCard.swift
