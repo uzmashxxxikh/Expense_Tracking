@@ -52,3 +52,7 @@ __MACOSX/
 /Persistence.swift
 /RecentActivityList.swift
 /TotalSpentCard.swift
+
+# Markdown files (except README.md)
+*.md
+!README.md
