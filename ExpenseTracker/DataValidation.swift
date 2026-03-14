@@ -71,12 +71,12 @@ struct DataValidation {
     static func validateExpenseDate(_ date: Date) -> (isValid: Bool, error: String?) {
         let calendar = Calendar.current
         
-        // Check if date is in the future
+       
         if calendar.compare(date, to: Date(), toGranularity: .day) == .orderedDescending {
             return (false, "Expense date cannot be in the future")
         }
         
-        // Check if date is too far in the past (more than 10 years)
+        
         if let tenYearsAgo = calendar.date(byAdding: .year, value: -10, to: Date()),
            date < tenYearsAgo {
             return (false, "Expense date cannot be more than 10 years ago")

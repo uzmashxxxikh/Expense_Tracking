@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  View model for expense-related data operations
-//
+
 
 import Foundation
 import CoreData
@@ -17,7 +17,6 @@ class ExpenseViewModel: ObservableObject {
         self.context = context
     }
     
-    // MARK: - Expense Operations
     
     func createExpense(
         amount: Double,
@@ -55,8 +54,6 @@ class ExpenseViewModel: ObservableObject {
         try context.save()
     }
     
-    // MARK: - Category Operations
-    
     func createCategory(
         name: String,
         iconName: String,
@@ -85,7 +82,6 @@ class ExpenseViewModel: ObservableObject {
     }
     
     func deleteCategory(_ category: Category) throws {
-        // Delete all associated expenses
         if let expenses = category.expenses as? Set<Expense> {
             for expense in expenses {
                 context.delete(expense)
@@ -96,7 +92,6 @@ class ExpenseViewModel: ObservableObject {
         try context.save()
     }
     
-    // MARK: - Data Fetching
     
     func fetchExpenses(
         sortBy: ExpenseSortOption = .dateDescending,
@@ -107,12 +102,12 @@ class ExpenseViewModel: ObservableObject {
         
         var predicates: [NSPredicate] = []
         
-        // Category filter
+        
         if let category = category {
             predicates.append(NSPredicate(format: "category == %@", category))
         }
         
-        // Search filter
+        
         if !searchText.isEmpty {
             predicates.append(NSPredicate(format: "merchantName CONTAINS[cd] %@", searchText))
         }
@@ -121,7 +116,7 @@ class ExpenseViewModel: ObservableObject {
             request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         }
         
-        // Sort descriptor
+        
         request.sortDescriptors = [sortBy.sortDescriptor]
         
         do {
@@ -144,7 +139,7 @@ class ExpenseViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Analytics
+    
     
     func getTotalSpent(for period: TimePeriod = .allTime) -> Double {
         let expenses = getExpenses(for: period)
@@ -180,7 +175,7 @@ class ExpenseViewModel: ObservableObject {
     }
 }
 
-// MARK: - Supporting Types
+
 
 enum ExpenseSortOption {
     case dateAscending

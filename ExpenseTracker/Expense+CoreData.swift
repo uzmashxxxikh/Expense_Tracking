@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  Core Data model extension for Expense entity
-//
+
 
 import CoreData
 import Foundation
@@ -24,7 +24,6 @@ extension Expense {
     @NSManaged public var category: Category?
 }
 
-// MARK: - Computed Properties
 extension Expense {
     var formattedAmount: String {
         let formatter = NumberFormatter()

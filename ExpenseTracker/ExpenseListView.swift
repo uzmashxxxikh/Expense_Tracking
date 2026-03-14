@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  List view for all expenses with search and filtering
-//
+
 
 import SwiftUI
 import CoreData
@@ -30,14 +30,14 @@ struct ExpenseListView: View {
     private var filteredExpenses: [Expense] {
         var expenses = Array(allExpenses)
         
-        // Filter by search text
+    
         if !searchText.isEmpty {
             expenses = expenses.filter { expense in
                 expense.merchantName.localizedCaseInsensitiveContains(searchText)
             }
         }
         
-        // Filter by category
+       
         if let selectedCategory = selectedCategory {
             expenses = expenses.filter { $0.category == selectedCategory }
         }
@@ -71,7 +71,7 @@ struct ExpenseListView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
-                // Search and Filter Bar
+                
                 VStack(spacing: 12) {
                     HStack {
                         Image(systemName: "magnifyingglass")
@@ -108,7 +108,7 @@ struct ExpenseListView: View {
                 .padding()
                 .background(Color(.systemGroupedBackground))
                 
-                // Expense List
+             
                 if filteredExpenses.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "tray")
@@ -144,7 +144,7 @@ struct ExpenseListView: View {
                 }
             }
             
-            // Floating Add Button
+          
             Button {
                 showingAddExpense = true
             } label: {

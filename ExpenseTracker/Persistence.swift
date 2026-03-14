@@ -3,7 +3,6 @@
 //  ExpenseTracker
 //
 //  Core Data stack and preview data
-//
 
 import CoreData
 import SwiftUI

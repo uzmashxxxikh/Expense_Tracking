@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  Individual expense row component
-//
+
 
 import SwiftUI
 import CoreData
@@ -25,7 +25,7 @@ struct ExpenseRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Category Icon
+            
             if let category = expense.category {
                 Circle()
                     .fill(category.color)
@@ -46,7 +46,7 @@ struct ExpenseRow: View {
                     }
             }
             
-            // Expense Details
+         
             VStack(alignment: .leading, spacing: 4) {
                 Text(expense.merchantName)
                     .font(.subheadline)
@@ -62,7 +62,7 @@ struct ExpenseRow: View {
             
             Spacer()
             
-            // Amount and Date
+           
             VStack(alignment: .trailing, spacing: 4) {
                 Text(formattedAmount)
                     .font(.subheadline)

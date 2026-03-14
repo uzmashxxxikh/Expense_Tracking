@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  List component showing recent expense activity
-//
+
 
 import SwiftUI
 import CoreData

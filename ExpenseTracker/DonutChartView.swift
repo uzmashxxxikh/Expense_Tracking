@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  Interactive donut chart for expense categories
-//
+
 
 import SwiftUI
 import Charts
@@ -57,7 +57,7 @@ struct DonutChartView: View {
                 .frame(height: 200)
                 .chartLegend(.hidden)
                 .onTapGesture { location in
-                    // Simple tap handling - cycle through categories
+                    
                     if let current = selectedCategory,
                        let currentIndex = categoryTotals.firstIndex(where: { $0.category == current }) {
                         let nextIndex = (currentIndex + 1) % categoryTotals.count
@@ -67,7 +67,7 @@ struct DonutChartView: View {
                     }
                 }
                 
-                // Category legend
+                
                 VStack(spacing: 8) {
                     ForEach(categoryTotals.prefix(6), id: \.category.objectID) { item in
                         HStack(spacing: 6) {
