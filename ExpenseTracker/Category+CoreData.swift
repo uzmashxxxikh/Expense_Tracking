@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  Core Data model extension for Category entity
-//
+//  Benjamin Antolin
 
 import CoreData
 import Foundation

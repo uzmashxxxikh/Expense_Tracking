@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  View for adding and editing expenses
-//
+//  Benjamin Antolin
 
 import SwiftUI
 import CoreData
