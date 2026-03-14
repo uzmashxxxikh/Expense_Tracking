@@ -2,7 +2,7 @@
 //  TotalSpentCard.swift
 //  ExpenseTracker
 //
-//  Converted from total_spent_card.dart
+//  Card component showing total spent amount
 //
 
 import SwiftUI
@@ -17,28 +17,27 @@ struct TotalSpentCard: View {
     }
     
     var body: some View {
-        ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(hex: "#007AFF") ?? .blue)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Total Spent This Month")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Total Spent")
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.8))
-                
-                Text(formattedTotal)
-                    .font(.system(size: 36, weight: .bold))
-                    .foregroundStyle(.white)
-            }
-            .padding()
+            Text(formattedTotal)
+                .font(.system(size: 32, weight: .bold))
+                .foregroundStyle(.primary)
         }
-        .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color(hex: "#007AFF")?.opacity(0.1) ?? Color.blue.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 
 #Preview {
-    TotalSpentCard(total: 1234.56)
-        .padding()
-        .background(Color(.systemGroupedBackground))
+    VStack(spacing: 16) {
+        TotalSpentCard(total: 1234.56)
+        TotalSpentCard(total: 0.0)
+        TotalSpentCard(total: 999999.99)
+    }
+    .padding()
 }
-

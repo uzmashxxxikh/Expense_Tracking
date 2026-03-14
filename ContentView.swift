@@ -61,4 +61,3 @@ private struct CategoryToolbarLink: View {
     ContentView()
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }
-

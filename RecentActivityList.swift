@@ -2,46 +2,47 @@
 //  RecentActivityList.swift
 //  ExpenseTracker
 //
-//  Converted from recent_activity_list.dart
+//  List component showing recent expense activity
 //
 
 import SwiftUI
-import CoreData
 
 struct RecentActivityList: View {
     let expenses: [Expense]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Recent Activity")
                 .font(.headline)
             
             if expenses.isEmpty {
-                Text("No recent expenses")
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
+                VStack(spacing: 12) {
+                    Image(systemName: "clock")
+                        .font(.system(size: 32))
+                        .foregroundStyle(.secondary)
+                    Text("No recent activity")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
             } else {
-                VStack(spacing: 8) {
+                VStack(spacing: 12) {
                     ForEach(expenses) { expense in
                         ExpenseRow(expense: expense)
-                        
-                        if expense.id != expenses.last?.id {
-                            Divider()
-                        }
                     }
                 }
-                .padding()
-                .background(.background)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
             }
         }
+        .padding()
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 
 #Preview {
-    RecentActivityList(expenses: [])
+    let context = PersistenceController.preview.container.viewContext
+    return RecentActivityList(expenses: [])
+        .environment(\.managedObjectContext, context)
         .padding()
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

@@ -2,7 +2,7 @@
 //  ExpenseListView.swift
 //  ExpenseTracker
 //
-//  Updated to match COMP3097 Project Proposal mockup
+//  List view for all expenses with search and filtering
 //
 
 import SwiftUI
@@ -11,16 +11,15 @@ import CoreData
 struct ExpenseListView: View {
     @Environment(\.managedObjectContext) private var context
     @State private var searchText = ""
-    @State private var selectedCategory: Category? = nil
-    @State private var showingFilter = false
+    @State private var selectedCategory: Category?
     @State private var showingAddExpense = false
-    @State private var selectedExpense: Expense? = nil
+    @State private var editingExpense: Expense?
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Expense.date, ascending: false)],
         animation: .easeInOut
     )
-    private var expenses: FetchedResults<Expense>
+    private var allExpenses: FetchedResults<Expense>
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Category.name, ascending: true)],
@@ -29,67 +28,97 @@ struct ExpenseListView: View {
     private var categories: FetchedResults<Category>
     
     private var filteredExpenses: [Expense] {
-        expenses.filter { expense in
-            let matchesSearch = searchText.isEmpty ||
-            expense.merchantName.localizedCaseInsensitiveContains(searchText)
-            
-            let matchesCategory = selectedCategory == nil ||
-            expense.category == selectedCategory
-            
-            return matchesSearch && matchesCategory
+        var expenses = Array(allExpenses)
+        
+        // Filter by search text
+        if !searchText.isEmpty {
+            expenses = expenses.filter { expense in
+                expense.merchantName.localizedCaseInsensitiveContains(searchText)
+            }
         }
+        
+        // Filter by category
+        if let selectedCategory = selectedCategory {
+            expenses = expenses.filter { $0.category == selectedCategory }
+        }
+        
+        return expenses
     }
     
     private var groupedExpenses: [(String, [Expense])] {
         let calendar = Calendar.current
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEE, MMM d"
-        
-        var groups: [(String, [Expense])] = []
-        
-        let sorted = filteredExpenses.sorted { $0.date > $1.date }
-        var buckets: [String: [Expense]] = [:]
-        var order: [String] = []
-        
-        for expense in sorted {
-            let label: String
+        let grouped = Dictionary(grouping: filteredExpenses) { expense in
             if calendar.isDateInToday(expense.date) {
-                label = "Today"
+                return "Today"
             } else if calendar.isDateInYesterday(expense.date) {
-                label = "Yesterday"
+                return "Yesterday"
             } else {
-                label = formatter.string(from: expense.date)
-            }
-            
-            if buckets[label] == nil {
-                order.append(label)
-                buckets[label] = []
-            }
-            buckets[label]?.append(expense)
-        }
-        
-        for key in order {
-            if let list = buckets[key] {
-                groups.append((key, list))
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                return formatter.string(from: expense.date)
             }
         }
         
-        return groups
+        return grouped.sorted { first, second in
+            if first.key == "Today" { return true }
+            if second.key == "Today" { return false }
+            if first.key == "Yesterday" { return true }
+            if second.key == "Yesterday" { return false }
+            return first.key > second.key
+        }
     }
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            Group {
-                if groupedExpenses.isEmpty {
+            VStack(spacing: 0) {
+                // Search and Filter Bar
+                VStack(spacing: 12) {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        TextField("Search expenses...", text: $searchText)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color(.systemGray6))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            FilterChip(
+                                title: "All Categories",
+                                isSelected: selectedCategory == nil
+                            ) {
+                                selectedCategory = nil
+                            }
+                            
+                            ForEach(categories) { category in
+                                FilterChip(
+                                    title: category.name,
+                                    color: category.color,
+                                    isSelected: selectedCategory == category
+                                ) {
+                                    selectedCategory = selectedCategory == category ? nil : category
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding()
+                .background(Color(.systemGroupedBackground))
+                
+                // Expense List
+                if filteredExpenses.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "tray")
-                            .font(.system(size: 60))
+                            .font(.system(size: 48))
                             .foregroundStyle(.secondary)
-                        Text(searchText.isEmpty ? "No expenses yet" : "No expenses found")
+                        Text("No expenses found")
                             .font(.headline)
                             .foregroundStyle(.secondary)
-                        if !searchText.isEmpty {
-                            Text("Try adjusting your search")
+                        if !searchText.isEmpty || selectedCategory != nil {
+                            Text("Try adjusting your search or filters")
                                 .font(.subheadline)
                                 .foregroundStyle(.tertiary)
                         }
@@ -97,122 +126,79 @@ struct ExpenseListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
-                        ForEach(groupedExpenses, id: \.0) { section in
-                            Section {
-                                ForEach(section.1) { expense in
-                                    Button {
-                                        selectedExpense = expense
-                                        showingAddExpense = true
-                                    } label: {
-                                        ExpenseRow(expense: expense)
-                                    }
-                                    .buttonStyle(.plain)
+                        ForEach(groupedExpenses, id: \.0) { section, expenses in
+                            Section(section) {
+                                ForEach(expenses) { expense in
+                                    ExpenseRow(expense: expense)
+                                        .onTapGesture {
+                                            editingExpense = expense
+                                        }
                                 }
                                 .onDelete { indexSet in
-                                    delete(at: indexSet, in: section.1)
+                                    deleteExpenses(from: expenses, at: indexSet)
                                 }
-                            } header: {
-                                Text(section.0)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.primary)
-                                    .textCase(nil)
                             }
                         }
                     }
-                }
-            }
-            .searchable(text: $searchText, prompt: "Search by merchant name")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showingFilter = true
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                    }
-                    .disabled(categories.isEmpty)
+                    .listStyle(.insetGrouped)
                 }
             }
             
+            // Floating Add Button
             Button {
-                selectedExpense = nil
                 showingAddExpense = true
             } label: {
                 Image(systemName: "plus")
-                    .font(.title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
                     .foregroundStyle(.white)
                     .frame(width: 56, height: 56)
                     .background(Color(hex: "#007AFF") ?? .blue)
                     .clipShape(Circle())
-                    .shadow(radius: 6)
+                    .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
             }
-            .padding(24)
+            .padding(.trailing, 24)
+            .padding(.bottom, 24)
         }
         .sheet(isPresented: $showingAddExpense) {
-            AddEditExpenseView(existingExpense: selectedExpense)
+            AddEditExpenseView(existingExpense: nil)
                 .environment(\.managedObjectContext, context)
         }
-        }
-        .sheet(isPresented: $showingFilter) {
-            CategoryFilterSheet(
-                categories: Array(categories),
-                selectedCategory: $selectedCategory
-            )
+        .sheet(item: $editingExpense) { expense in
+            AddEditExpenseView(existingExpense: expense)
+                .environment(\.managedObjectContext, context)
         }
     }
     
-    private func delete(at offsets: IndexSet, in sectionExpenses: [Expense]) {
+    private func deleteExpenses(from expenses: [Expense], at offsets: IndexSet) {
         for index in offsets {
-            let expense = sectionExpenses[index]
-            context.delete(expense)
+            context.delete(expenses[index])
         }
-        try? context.save()
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to delete expense: \(error)")
+        }
     }
 }
 
-struct CategoryFilterSheet: View {
-    let categories: [Category]
-    @Binding var selectedCategory: Category?
-    @Environment(\.dismiss) private var dismiss
+struct FilterChip: View {
+    let title: String
+    var color: Color = .gray
+    let isSelected: Bool
+    let action: () -> Void
     
     var body: some View {
-        NavigationStack {
-            List {
-                Button {
-                    selectedCategory = nil
-                    dismiss()
-                } label: {
-                    HStack {
-                        Text("All Categories")
-                        Spacer()
-                        if selectedCategory == nil {
-                            Image(systemName: "checkmark")
-                                .foregroundStyle(.blue)
-                        }
-                    }
-                }
-                
-                ForEach(categories) { category in
-                    Button {
-                        selectedCategory = category
-                        dismiss()
-                    } label: {
-                        HStack {
-                            Circle()
-                                .fill(category.color)
-                                .frame(width: 10, height: 10)
-                            Text(category.name)
-                            Spacer()
-                            if selectedCategory == category {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.blue)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Filter by Category")
-            .navigationBarTitleDisplayMode(.inline)
+        Button(action: action) {
+            Text(title)
+                .font(.caption)
+                .fontWeight(.medium)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(isSelected ? color : Color(.systemGray5))
+                .foregroundStyle(isSelected ? .white : .primary)
+                .clipShape(Capsule())
         }
     }
 }
@@ -223,4 +209,3 @@ struct CategoryFilterSheet: View {
     }
     .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }
-

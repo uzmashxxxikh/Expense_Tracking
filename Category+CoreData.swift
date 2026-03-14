@@ -1,4 +1,12 @@
+//
+//  Category+CoreData.swift
+//  ExpenseTracker
+//
+//  Core Data model extension for Category entity
+//
+
 import CoreData
+import Foundation
 import SwiftUI
 
 @objc(Category)
@@ -17,11 +25,33 @@ extension Category {
     @NSManaged public var expenses: NSSet?
 }
 
-// MARK: - Convenience
-
+// MARK: Generated accessors for expenses
 extension Category {
-    var color: Color {
-        Color(hex: colorHex) ?? Color(hex: "#007AFF")!
-    }
+    @objc(addExpensesObject:)
+    @NSManaged public func addToExpenses(_ value: Expense)
+
+    @objc(removeExpensesObject:)
+    @NSManaged public func removeFromExpenses(_ value: Expense)
+
+    @objc(addExpenses:)
+    @NSManaged public func addToExpenses(_ values: NSSet)
+
+    @objc(removeExpenses:)
+    @NSManaged public func removeFromExpenses(_ values: NSSet)
 }
 
+// MARK: - Computed Properties
+extension Category {
+    var color: Color {
+        Color(hex: colorHex) ?? .gray
+    }
+    
+    var expenseCount: Int {
+        (expenses as? Set<Expense>)?.count ?? 0
+    }
+    
+    var totalAmount: Double {
+        guard let expenses = expenses as? Set<Expense> else { return 0 }
+        return expenses.reduce(0) { $0 + $1.amount }
+    }
+}

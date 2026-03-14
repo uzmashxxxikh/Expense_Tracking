@@ -98,4 +98,3 @@ struct DashboardView: View {
     }
     .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }
-
