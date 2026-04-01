@@ -3,8 +3,9 @@
 //  ExpenseTracker
 //
 //  View for adding and editing expenses
-//  Benjamin Antolin
-
+//  Author: Benjamin Antolin 101522465
+//  Edited by: Uzma Shaikh 101504303 added QuickAddCategoryView sheet integration
+//  Edited by: Zaki Mohammed 101507934 added form validation error alerts
 import SwiftUI
 import CoreData
 

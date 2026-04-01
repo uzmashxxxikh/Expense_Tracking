@@ -3,7 +3,9 @@
 //  ExpenseTracker
 //
 //  Core Data model extension for Category entity
-//  Benjamin Antolin
+//  Author: Benjamin Antolin 101522465
+//  Edited by: Zaki Mohammed 101507934 added totalAmount computed property
+//  Edited by: Uzma Shaikh 101504303 added color computed property using hex conversion
 
 import CoreData
 import Foundation
