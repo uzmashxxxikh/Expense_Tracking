@@ -3,6 +3,9 @@
 //  ExpenseTracker
 //
 //  List view for all expenses with search and filtering
+//  Author: Uzma Shaikh 101504303
+//  Edited by: Zaki Mohammed 101507934 added filtering and deleting functions
+//  Edited by: Benjamin Antolin 101522465 editted buttons
 
 
 import SwiftUI

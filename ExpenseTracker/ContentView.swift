@@ -1,3 +1,10 @@
+//
+//  ContentView.swift
+//  ExpenseTracker
+//
+//  ContentView of App
+//  Author: Zaki Mohammed 101507934
+
 import SwiftUI
 import CoreData
 

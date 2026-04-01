@@ -3,6 +3,8 @@
 //  ExpenseTracker
 //
 //  Core Data stack and preview data
+//  Author: Zaki Mohammed 101507934
+//  Edited by: Uzma Shaikh 101504303 added seed default categories
 
 import CoreData
 import SwiftUI

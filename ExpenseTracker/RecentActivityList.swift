@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  List component showing recent expense activity
-
+// Author: Uzma Shaih 101504303
 
 import SwiftUI
 import CoreData

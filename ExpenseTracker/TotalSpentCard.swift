@@ -3,8 +3,9 @@
 //  ExpenseTracker
 //
 //  Card component showing total spent amount
-
-
+//  Author Zaki Mohammed 101507934
+//  Edited by: Benjamin Antolin 101522465 worked on UI
+//  Edited by: Uzma Shaikh 101504303 worked on UI components like adding colour schemes 
 import SwiftUI
 
 struct TotalSpentCard: View {

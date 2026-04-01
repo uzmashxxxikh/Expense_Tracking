@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  Core Data model extension for Expense entity
-
+// Author: Zaki Mohammed 101507934
 
 import CoreData
 import Foundation

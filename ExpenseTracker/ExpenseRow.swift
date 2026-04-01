@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  Individual expense row component
-
+// Author: Zaki Mohammed 101507934
 
 import SwiftUI
 import CoreData

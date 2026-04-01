@@ -3,7 +3,7 @@
 //  ExpenseTracker
 //
 //  Color utilities for hex conversion
-//
+//  Author: Uzma Shaikh 101504303
 
 import SwiftUI
 
